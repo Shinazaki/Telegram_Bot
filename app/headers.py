@@ -1,29 +1,10 @@
-from aiogram import F,Router
-from aiogram.filters import CommandStart,Command
-from aiogram.types import Message, CallbackQuery
-from aiogram.fsm.context import FSMContext
+from aiogram import Router
 
-import app.Keyboard as key
-import app.DataBASE.Request as req
 router = Router()
+from app.handlers.absence import router as absence_router
+from app.handlers.auth import router as auth_router
+from app.handlers.report import router as report_router
 
-
-@router.message(CommandStart())
-async def start(message: Message):
-    await message.answer("Добро пожаловать, ввойдите", reply_markup = key.Register_button)
-    
-@router.callback_query(F.data == "register")
-async def register(callback:CallbackQuery,):
-    await callback.message.answer(text="Введите ФИО",reply_markup=key.choose_reason)
-
-
-@router.message(F.text)
-async def recieve(message: Message):
-    await req.get_student_SNF(message)
-    
-# @router.message()
-# async def recieve(message: Message,state:FSMContext):
-
-
-# @router.message()
-# async def recieve(message: Message,state:FSMContext):
+router.include_router(auth_router)
+router.include_router(absence_router)
+router.include_router(report_router)
